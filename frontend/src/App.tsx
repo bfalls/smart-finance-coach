@@ -15,7 +15,11 @@ function App() {
     summary,
     summaryLoading,
     summaryError,
+    fetchPersonas,
+    fetchSummary,
   } = useFinanceData();
+
+  const personaReady = !personasLoading && !personasError && Boolean(selectedPersonaId);
 
   return (
     <div className="min-h-screen text-slate-900">
@@ -37,12 +41,33 @@ function App() {
         <section className="space-y-4 lg:col-span-2">
           <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
             {personasLoading && (
-              <p className="text-sm text-slate-500">Loading personas…</p>
+              <div className="animate-pulse space-y-3">
+                <div className="h-4 w-32 rounded bg-slate-200" />
+                <div className="h-6 w-48 rounded bg-slate-200" />
+                <div className="grid gap-3 md:grid-cols-3">
+                  {[1, 2, 3].map((item) => (
+                    <div
+                      key={item}
+                      className="h-24 rounded-lg border border-slate-200 bg-slate-100"
+                    />
+                  ))}
+                </div>
+              </div>
             )}
             {personasError && (
-              <p role="alert" className="text-sm text-red-600">
-                Unable to load personas: {personasError}
-              </p>
+              <div
+                role="alert"
+                className="flex flex-col gap-2 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+              >
+                <p>Unable to load personas: {personasError}</p>
+                <button
+                  type="button"
+                  onClick={fetchPersonas}
+                  className="inline-flex w-fit items-center gap-2 rounded-md border border-red-200 bg-white px-3 py-1 text-sm font-medium text-red-700 shadow-sm transition hover:border-red-300 hover:text-red-800"
+                >
+                  Retry loading personas
+                </button>
+              </div>
             )}
             {!personasLoading &&
               !personasError &&
@@ -58,13 +83,30 @@ function App() {
 
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             {summaryLoading && (
-              <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-500 shadow-sm">
-                Loading summary…
-              </div>
+              <>
+                <div className="animate-pulse rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                  <div className="h-4 w-32 rounded bg-slate-200" />
+                  <div className="mt-3 h-6 w-full rounded bg-slate-100" />
+                  <div className="mt-2 h-6 w-3/4 rounded bg-slate-100" />
+                </div>
+                <div className="animate-pulse rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                  <div className="h-4 w-28 rounded bg-slate-200" />
+                  <div className="mt-3 h-24 w-full rounded bg-slate-100" />
+                </div>
+              </>
             )}
             {summaryError && (
               <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 shadow-sm">
-                {summaryError}
+                <div className="flex items-center justify-between gap-3">
+                  <p className="leading-relaxed">{summaryError}</p>
+                  <button
+                    type="button"
+                    onClick={fetchSummary}
+                    className="inline-flex items-center gap-2 rounded-md border border-red-200 bg-white px-3 py-1 text-xs font-medium text-red-700 shadow-sm transition hover:border-red-300 hover:text-red-800"
+                  >
+                    Retry
+                  </button>
+                </div>
               </div>
             )}
             {!summaryLoading && !summaryError && summary && (
@@ -83,12 +125,30 @@ function App() {
 
         <section className="lg:col-span-1">
           <div className="h-full rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-            {selectedPersonaId ? (
-              <ChatPanel personaId={selectedPersonaId} />
-            ) : (
+            {personasLoading && (
+              <p className="text-sm text-slate-500">
+                Loading personas before chat becomes available…
+              </p>
+            )}
+            {personasError && (
+              <div className="space-y-2 text-sm text-red-700">
+                <p>Chat is unavailable because personas failed to load.</p>
+                <button
+                  type="button"
+                  onClick={fetchPersonas}
+                  className="inline-flex items-center gap-2 rounded-md border border-red-200 bg-white px-3 py-1 text-xs font-medium text-red-700 shadow-sm transition hover:border-red-300 hover:text-red-800"
+                >
+                  Retry loading personas
+                </button>
+              </div>
+            )}
+            {!personasLoading && !personasError && !selectedPersonaId && (
               <p className="text-sm text-slate-500">
                 Choose a persona to start chatting.
               </p>
+            )}
+            {personaReady && selectedPersonaId && (
+              <ChatPanel personaId={selectedPersonaId} />
             )}
           </div>
         </section>

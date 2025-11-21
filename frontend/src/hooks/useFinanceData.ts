@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { FinanceSummary, Persona } from '../types/finance';
 
 type SummaryCache = Record<string, FinanceSummary>;
@@ -59,47 +59,47 @@ const useFinanceData = () => {
   const [summaryLoading, setSummaryLoading] = useState<boolean>(false);
   const [summaryError, setSummaryError] = useState<string | null>(null);
 
+  const fetchPersonas = useCallback(async () => {
+    if (personasLoading) return;
+
+    try {
+      setPersonasLoading(true);
+      setPersonasError(null);
+
+      const response = await fetch("/personas");
+      if (!response.ok) {
+        throw new Error(`Failed to load personas (status ${response.status})`);
+      }
+
+      const data = await response.json();
+      const rawList = Array.isArray(data) ? data : data?.personas ?? [];
+      const normalized = rawList
+        .map(normalizePersona)
+        .filter((persona): persona is Persona => Boolean(persona));
+
+      if (normalized.length === 0) {
+        throw new Error("No personas available.");
+      }
+
+      setPersonas(normalized);
+      setSelectedPersonaId((prev) => prev ?? normalized[0]?.id ?? null);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Unable to load personas.";
+      setPersonasError(message);
+    } finally {
+      setPersonasLoading(false);
+    }
+  }, [personasLoading]);
+
   useEffect(() => {
     if (personas.length > 0 || personasLoading || personasError) return;
 
-    const fetchPersonas = async () => {
-      try {
-        setPersonasLoading(true);
-        setPersonasError(null);
-
-        const response = await fetch("/personas");
-        if (!response.ok) {
-          throw new Error(
-            `Failed to load personas (status ${response.status})`
-          );
-        }
-
-        const data = await response.json();
-        const rawList = Array.isArray(data) ? data : data?.personas ?? [];
-        const normalized = rawList
-          .map(normalizePersona)
-          .filter((persona): persona is Persona => Boolean(persona));
-
-        if (normalized.length === 0) {
-          throw new Error("No personas available.");
-        }
-
-        setPersonas(normalized);
-        setSelectedPersonaId((prev) => prev ?? normalized[0]?.id ?? null);
-      } catch (error) {
-        const message =
-          error instanceof Error ? error.message : "Unable to load personas.";
-        setPersonasError(message);
-      } finally {
-        setPersonasLoading(false);
-      }
-    };
-
     fetchPersonas();
-  }, [personas, personasLoading, personasError]);
+  }, [fetchPersonas, personas, personasLoading, personasError]);
 
-  useEffect(() => {
-    if (!selectedPersonaId) return;
+  const fetchSummary = useCallback(async () => {
+    if (!selectedPersonaId || summaryLoading) return;
 
     const cachedSummary = summaryCache[selectedPersonaId];
     if (cachedSummary) {
@@ -108,32 +108,35 @@ const useFinanceData = () => {
       return;
     }
 
-    const fetchSummary = async () => {
-      try {
-        setSummaryLoading(true);
-        setSummaryError(null);
+    try {
+      setSummaryLoading(true);
+      setSummaryError(null);
 
-        const response = await fetch(`/personas/${selectedPersonaId}/summary`);
-        if (!response.ok) {
-          throw new Error(`Failed to load summary (status ${response.status})`);
-        }
-
-        const data = await response.json();
-        const normalized = normalizeSummary(data);
-
-        setSummary(normalized);
-        setSummaryCache((prev) => ({ ...prev, [selectedPersonaId]: normalized }));
-      } catch (error) {
-        const message = error instanceof Error ? error.message : 'Unable to load summary data.';
-        setSummaryError(message);
-        setSummary(null);
-      } finally {
-        setSummaryLoading(false);
+      const response = await fetch(`/personas/${selectedPersonaId}/summary`);
+      if (!response.ok) {
+        throw new Error(`Failed to load summary (status ${response.status})`);
       }
-    };
+
+      const data = await response.json();
+      const normalized = normalizeSummary(data);
+
+      setSummary(normalized);
+      setSummaryCache((prev) => ({ ...prev, [selectedPersonaId]: normalized }));
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Unable to load summary data.';
+      setSummaryError(message);
+      setSummary(null);
+    } finally {
+      setSummaryLoading(false);
+    }
+  }, [selectedPersonaId, summaryCache, summaryLoading]);
+
+  useEffect(() => {
+    if (!selectedPersonaId) return;
 
     fetchSummary();
-  }, [selectedPersonaId, summaryCache]);
+  }, [fetchSummary, selectedPersonaId]);
 
   const selectPersona = (id: string) => setSelectedPersonaId(id);
 
@@ -146,6 +149,8 @@ const useFinanceData = () => {
     summary,
     summaryLoading,
     summaryError,
+    fetchPersonas,
+    fetchSummary,
   };
 };
 
