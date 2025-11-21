@@ -60,16 +60,18 @@ const useFinanceData = () => {
   const [summaryError, setSummaryError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (personas.length > 0 || personasLoading) return;
+    if (personas.length > 0 || personasLoading || personasError) return;
 
     const fetchPersonas = async () => {
       try {
         setPersonasLoading(true);
         setPersonasError(null);
 
-        const response = await fetch('/personas');
+        const response = await fetch("/personas");
         if (!response.ok) {
-          throw new Error(`Failed to load personas (status ${response.status})`);
+          throw new Error(
+            `Failed to load personas (status ${response.status})`
+          );
         }
 
         const data = await response.json();
@@ -79,13 +81,14 @@ const useFinanceData = () => {
           .filter((persona): persona is Persona => Boolean(persona));
 
         if (normalized.length === 0) {
-          throw new Error('No personas available.');
+          throw new Error("No personas available.");
         }
 
         setPersonas(normalized);
         setSelectedPersonaId((prev) => prev ?? normalized[0]?.id ?? null);
       } catch (error) {
-        const message = error instanceof Error ? error.message : 'Unable to load personas.';
+        const message =
+          error instanceof Error ? error.message : "Unable to load personas.";
         setPersonasError(message);
       } finally {
         setPersonasLoading(false);
@@ -93,7 +96,7 @@ const useFinanceData = () => {
     };
 
     fetchPersonas();
-  }, [personas, personasLoading]);
+  }, [personas, personasLoading, personasError]);
 
   useEffect(() => {
     if (!selectedPersonaId) return;
