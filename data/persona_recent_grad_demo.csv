@@ -1,0 +1,28 @@
+date,description,category,amount,type,essential
+2024-06-01,Entry salary,Income,3200,income,True
+2024-06-05,Freelance design,Income,300,income,False
+2024-06-02,Apartment rent,Rent,1200,expense,True
+2024-06-06,Groceries,Groceries,280,expense,True
+2024-06-10,Coffee and dining,Restaurants,200,expense,False
+2024-06-12,Metro pass,Transport,140,expense,True
+2024-06-15,Student loan payment,Student Loan,320,expense,True
+2024-06-18,Streaming & nights out,Entertainment,160,expense,False
+2024-06-22,Utilities,Utilities,130,expense,True
+2024-07-01,Entry salary,Income,3200,income,True
+2024-07-05,Freelance design,Income,300,income,False
+2024-07-02,Apartment rent,Rent,1200,expense,True
+2024-07-06,Groceries,Groceries,290,expense,True
+2024-07-10,Coffee and dining,Restaurants,210,expense,False
+2024-07-12,Metro pass,Transport,150,expense,True
+2024-07-15,Student loan payment,Student Loan,320,expense,True
+2024-07-18,Streaming & nights out,Entertainment,170,expense,False
+2024-07-22,Utilities,Utilities,135,expense,True
+2024-08-01,Entry salary,Income,3200,income,True
+2024-08-05,Freelance design,Income,300,income,False
+2024-08-02,Apartment rent,Rent,1200,expense,True
+2024-08-06,Groceries,Groceries,295,expense,True
+2024-08-10,Coffee and dining,Restaurants,225,expense,False
+2024-08-12,Metro pass,Transport,150,expense,True
+2024-08-15,Student loan payment,Student Loan,320,expense,True
+2024-08-18,Streaming & nights out,Entertainment,180,expense,False
+2024-08-22,Utilities,Utilities,135,expense,True

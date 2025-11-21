@@ -1,0 +1,22 @@
+date,description,category,amount,type,essential
+2024-06-01,Salary,Income,4500,income,True
+2024-06-02,Apartment Rent,Rent,1500,expense,True
+2024-06-05,Grocery run,Groceries,380,expense,True
+2024-06-10,Weekend dining,Restaurants,320,expense,False
+2024-06-12,Transit pass,Transport,180,expense,True
+2024-06-15,Movie night,Entertainment,220,expense,False
+2024-06-20,Electricity & water,Utilities,170,expense,True
+2024-07-01,Salary,Income,4500,income,True
+2024-07-02,Apartment Rent,Rent,1500,expense,True
+2024-07-05,Grocery run,Groceries,400,expense,True
+2024-07-10,Weekend dining,Restaurants,360,expense,False
+2024-07-12,Transit pass,Transport,190,expense,True
+2024-07-15,Movie night,Entertainment,240,expense,False
+2024-07-20,Electricity & water,Utilities,175,expense,True
+2024-08-01,Salary,Income,4500,income,True
+2024-08-02,Apartment Rent,Rent,1500,expense,True
+2024-08-05,Grocery run,Groceries,420,expense,True
+2024-08-10,Weekend dining,Restaurants,380,expense,False
+2024-08-12,Transit pass,Transport,190,expense,True
+2024-08-15,Movie night,Entertainment,260,expense,False
+2024-08-20,Electricity & water,Utilities,180,expense,True

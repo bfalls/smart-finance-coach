@@ -1,0 +1,28 @@
+date,description,category,amount,type,essential
+2024-06-01,Household Salary,Income,8200,income,True
+2024-06-03,Freelance project,Income,500,income,False
+2024-06-04,Mortgage,Rent/Mortgage,2300,expense,True
+2024-06-06,Weekly groceries,Groceries,900,expense,True
+2024-06-08,Family dinners,Restaurants,650,expense,False
+2024-06-12,Childcare center,Childcare,800,expense,True
+2024-06-15,Car fuel & maintenance,Transport,350,expense,True
+2024-06-18,Weekend activities,Entertainment,300,expense,False
+2024-06-20,Utilities,Utilities,260,expense,True
+2024-07-01,Household Salary,Income,8200,income,True
+2024-07-03,Freelance project,Income,400,income,False
+2024-07-04,Mortgage,Rent/Mortgage,2300,expense,True
+2024-07-06,Weekly groceries,Groceries,950,expense,True
+2024-07-08,Family dinners,Restaurants,670,expense,False
+2024-07-12,Childcare center,Childcare,800,expense,True
+2024-07-15,Car fuel & maintenance,Transport,360,expense,True
+2024-07-18,Weekend activities,Entertainment,320,expense,False
+2024-07-20,Utilities,Utilities,270,expense,True
+2024-08-01,Household Salary,Income,8200,income,True
+2024-08-03,Freelance project,Income,400,income,False
+2024-08-04,Mortgage,Rent/Mortgage,2300,expense,True
+2024-08-06,Weekly groceries,Groceries,980,expense,True
+2024-08-08,Family dinners,Restaurants,720,expense,False
+2024-08-12,Childcare center,Childcare,800,expense,True
+2024-08-15,Car fuel & maintenance,Transport,360,expense,True
+2024-08-18,Weekend activities,Entertainment,340,expense,False
+2024-08-20,Utilities,Utilities,270,expense,True
