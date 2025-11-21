@@ -6,7 +6,16 @@ import useFinanceData from './hooks/useFinanceData';
 import './index.css';
 
 function App() {
-  const { personas, selectedPersonaId, selectPersona, summary } = useFinanceData();
+  const {
+    personas,
+    personasLoading,
+    personasError,
+    selectedPersonaId,
+    selectPersona,
+    summary,
+    summaryLoading,
+    summaryError,
+  } = useFinanceData();
 
   return (
     <div className="min-h-screen text-slate-900">
@@ -23,22 +32,51 @@ function App() {
       <main className="mx-auto grid max-w-6xl grid-cols-1 gap-4 px-4 py-6 lg:grid-cols-3">
         <section className="space-y-4 lg:col-span-2">
           <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-            <PersonaSelector
-              personas={personas}
-              selectedPersonaId={selectedPersonaId}
-              onSelect={selectPersona}
-            />
+            {personasLoading && <p className="text-sm text-slate-500">Loading personas…</p>}
+            {personasError && (
+              <p className="text-sm text-red-600">Unable to load personas: {personasError}</p>
+            )}
+            {!personasLoading && !personasError && personas.length > 0 && selectedPersonaId && (
+              <PersonaSelector
+                personas={personas}
+                selectedPersonaId={selectedPersonaId}
+                onSelect={selectPersona}
+              />
+            )}
           </div>
 
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            <SummaryPanel summary={summary} />
-            <SpendingCharts summary={summary} />
+            {summaryLoading && (
+              <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-500 shadow-sm">
+                Loading summary…
+              </div>
+            )}
+            {summaryError && (
+              <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 shadow-sm">
+                {summaryError}
+              </div>
+            )}
+            {!summaryLoading && !summaryError && summary && (
+              <>
+                <SummaryPanel summary={summary} />
+                <SpendingCharts summary={summary} />
+              </>
+            )}
+            {!summaryLoading && !summaryError && !summary && (
+              <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-500 shadow-sm">
+                Select a persona to view their finance summary.
+              </div>
+            )}
           </div>
         </section>
 
         <section className="lg:col-span-1">
           <div className="h-full rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-            <ChatPanel personaId={selectedPersonaId} />
+            {selectedPersonaId ? (
+              <ChatPanel personaId={selectedPersonaId} />
+            ) : (
+              <p className="text-sm text-slate-500">Choose a persona to start chatting.</p>
+            )}
           </div>
         </section>
       </main>
