@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/main.tsx","./src/vite-env.d.ts","./src/components/chatpanel.tsx","./src/components/personaselector.tsx","./src/components/spendingcharts.tsx","./src/components/summarypanel.tsx","./src/hooks/usechat.ts","./src/hooks/usefinancedata.ts","./src/types/finance.ts"],"version":"5.9.3"}
