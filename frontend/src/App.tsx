@@ -1,6 +1,9 @@
 import PersonaSelector from './components/PersonaSelector';
+import PersonaSelectorSkeleton from './components/PersonaSelectorSkeleton';
 import SpendingCharts from './components/SpendingCharts';
+import SpendingChartsSkeleton from './components/SpendingChartsSkeleton';
 import SummaryPanel from './components/SummaryPanel';
+import SummaryPanelSkeleton from './components/SummaryPanelSkeleton';
 import ChatPanel from './components/ChatPanel';
 import useFinanceData from './hooks/useFinanceData';
 import './index.css';
@@ -40,33 +43,25 @@ function App() {
       <main className="mx-auto grid max-w-6xl grid-cols-1 gap-4 px-4 py-6 lg:grid-cols-3">
         <section className="space-y-4 lg:col-span-2">
           <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-            {personasLoading && (
-              <div className="animate-pulse space-y-3">
-                <div className="h-4 w-32 rounded bg-slate-200" />
-                <div className="h-6 w-48 rounded bg-slate-200" />
-                <div className="grid gap-3 md:grid-cols-3">
-                  {[1, 2, 3].map((item) => (
-                    <div
-                      key={item}
-                      className="h-24 rounded-lg border border-slate-200 bg-slate-100"
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
+            {personasLoading && <PersonaSelectorSkeleton />}
             {personasError && (
               <div
                 role="alert"
-                className="flex flex-col gap-2 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+                className="flex flex-col gap-2 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700 shadow-sm"
               >
-                <p>Unable to load personas: {personasError}</p>
-                <button
-                  type="button"
-                  onClick={fetchPersonas}
-                  className="inline-flex w-fit items-center gap-2 rounded-md border border-red-200 bg-white px-3 py-1 text-sm font-medium text-red-700 shadow-sm transition hover:border-red-300 hover:text-red-800"
-                >
-                  Retry loading personas
-                </button>
+                <p className="font-medium">Unable to load personas.</p>
+                <p className="text-slate-700">
+                  {personasError} Please check your connection and retry.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={fetchPersonas}
+                    className="inline-flex items-center gap-2 rounded-md border border-red-200 bg-white px-3 py-1 text-sm font-medium text-red-700 shadow-sm transition hover:border-red-300 hover:text-red-800"
+                  >
+                    Retry loading personas
+                  </button>
+                </div>
               </div>
             )}
             {!personasLoading &&
@@ -84,28 +79,25 @@ function App() {
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             {summaryLoading && (
               <>
-                <div className="animate-pulse rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-                  <div className="h-4 w-32 rounded bg-slate-200" />
-                  <div className="mt-3 h-6 w-full rounded bg-slate-100" />
-                  <div className="mt-2 h-6 w-3/4 rounded bg-slate-100" />
-                </div>
-                <div className="animate-pulse rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-                  <div className="h-4 w-28 rounded bg-slate-200" />
-                  <div className="mt-3 h-24 w-full rounded bg-slate-100" />
-                </div>
+                <SummaryPanelSkeleton />
+                <SpendingChartsSkeleton />
               </>
             )}
             {summaryError && (
-              <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 shadow-sm">
-                <div className="flex items-center justify-between gap-3">
-                  <p className="leading-relaxed">{summaryError}</p>
-                  <button
-                    type="button"
-                    onClick={fetchSummary}
-                    className="inline-flex items-center gap-2 rounded-md border border-red-200 bg-white px-3 py-1 text-xs font-medium text-red-700 shadow-sm transition hover:border-red-300 hover:text-red-800"
-                  >
-                    Retry
-                  </button>
+              <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 shadow-sm lg:col-span-2">
+                <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
+                  <p className="leading-relaxed">
+                    We hit a snag loading the finance summary: {summaryError}
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={fetchSummary}
+                      className="inline-flex items-center gap-2 rounded-md border border-red-200 bg-white px-3 py-1 text-xs font-medium text-red-700 shadow-sm transition hover:border-red-300 hover:text-red-800"
+                    >
+                      Retry summary
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
@@ -148,7 +140,13 @@ function App() {
               </p>
             )}
             {personaReady && selectedPersonaId && (
-              <ChatPanel personaId={selectedPersonaId} summary={summary} />
+              <ChatPanel
+                personaId={selectedPersonaId}
+                summary={summary}
+                summaryError={summaryError}
+                summaryLoading={summaryLoading}
+                onRetrySummary={fetchSummary}
+              />
             )}
           </div>
         </section>
