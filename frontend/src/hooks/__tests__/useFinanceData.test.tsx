@@ -68,7 +68,7 @@ describe('useFinanceData', () => {
     cleanup();
   });
 
-  it('shows persona loading state and then renders the loaded list and summary', async () => {
+  it("shows persona loading state and then renders the loaded list and summary", async () => {
     const fetchMock = vi
       .fn()
       .mockResolvedValueOnce(createMockResponse([personaList[0]]))
@@ -79,47 +79,57 @@ describe('useFinanceData', () => {
             categories: [],
             goals: { target_savings_rate: 15, current_savings_rate: 5 },
           },
-        }),
+        })
       );
 
-    global.fetch = fetchMock as unknown as typeof fetch;
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
 
     render(<TestComponent />);
 
-    expect(screen.getByTestId('personas-loading')).toHaveTextContent('loading');
+    expect(screen.getByTestId("personas-loading")).toHaveTextContent("loading");
 
-    await waitFor(() => expect(screen.getByRole('button', { name: 'Persona One' })).toBeInTheDocument());
+    await waitFor(() =>
+      expect(
+        screen.getByRole("button", { name: "Persona One" })
+      ).toBeInTheDocument()
+    );
 
-    expect(screen.getByTestId('personas-loading')).toHaveTextContent('idle');
+    expect(screen.getByTestId("personas-loading")).toHaveTextContent("idle");
 
-    await waitFor(() => expect(screen.getByTestId('summary-goal')).toHaveTextContent('15'));
-    expect(screen.getByTestId('summary-loading')).toHaveTextContent('idle');
+    await waitFor(() =>
+      expect(screen.getByTestId("summary-goal")).toHaveTextContent("15")
+    );
+    expect(screen.getByTestId("summary-loading")).toHaveTextContent("idle");
 
-    expect(fetchMock).toHaveBeenCalledWith('/personas');
-    expect(fetchMock).toHaveBeenCalledWith('/personas/p1/summary');
+    expect(fetchMock).toHaveBeenCalledWith("/personas");
+    expect(fetchMock).toHaveBeenCalledWith("/personas/p1/summary");
   });
 
-  it('surfaces persona loading errors to the UI', async () => {
-    const fetchMock = vi.fn().mockResolvedValue(createMockResponse({}, false, 500));
-    global.fetch = fetchMock as unknown as typeof fetch;
+  it("surfaces persona loading errors to the UI", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(createMockResponse({}, false, 500));
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
 
     render(<TestComponent />);
 
     await waitFor(() =>
-      expect(screen.getByRole('alert')).toHaveTextContent(/Unable to load personas:/i),
+      expect(screen.getByRole("alert")).toHaveTextContent(
+        /Unable to load personas:/i
+      )
     );
-    expect(screen.getByTestId('personas-loading')).toHaveTextContent('idle');
+    expect(screen.getByTestId("personas-loading")).toHaveTextContent("idle");
   });
 
-  it('restarts summary loading when switching personas while a fetch is in flight', async () => {
+  it("restarts summary loading when switching personas while a fetch is in flight", async () => {
     const p1Deferred = createDeferred<void>();
 
     const fetchMock = vi.fn((url: string) => {
-      if (url === '/personas') {
+      if (url === "/personas") {
         return Promise.resolve(createMockResponse(personaList));
       }
 
-      if (url.includes('/personas/p1/summary')) {
+      if (url.includes("/personas/p1/summary")) {
         return Promise.resolve({
           ok: true,
           status: 200,
@@ -136,7 +146,7 @@ describe('useFinanceData', () => {
         } as Response);
       }
 
-      if (url.includes('/personas/p2/summary')) {
+      if (url.includes("/personas/p2/summary")) {
         return Promise.resolve(
           createMockResponse({
             summary: {
@@ -144,47 +154,53 @@ describe('useFinanceData', () => {
               categories: [],
               goals: { target_savings_rate: 25, current_savings_rate: 14 },
             },
-          }),
+          })
         );
       }
 
       throw new Error(`Unexpected request: ${url}`);
     });
 
-    global.fetch = fetchMock as unknown as typeof fetch;
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
 
     render(<TestComponent />);
 
-    await waitFor(() => expect(screen.getByRole('button', { name: 'Persona One' })).toBeInTheDocument());
-
-    expect(screen.getByTestId('summary-loading')).toHaveTextContent('loading');
-
-    fireEvent.click(screen.getByRole('button', { name: 'Persona Two' }));
-
-    p1Deferred.reject(new DOMException('Aborted', 'AbortError'));
-
     await waitFor(() =>
-      expect(screen.getByRole('button', { name: 'Persona Two' })).toContainElement(
-        screen.getByTestId('selected-persona'),
-      ),
+      expect(
+        screen.getByRole("button", { name: "Persona One" })
+      ).toBeInTheDocument()
     );
 
-    await waitFor(() => expect(screen.getByTestId('summary-goal')).toHaveTextContent('25'));
+    expect(screen.getByTestId("summary-loading")).toHaveTextContent("loading");
 
-    expect(screen.queryByRole('status')).not.toBeInTheDocument();
-    expect(screen.getByTestId('summary-loading')).toHaveTextContent('idle');
+    fireEvent.click(screen.getByRole("button", { name: "Persona Two" }));
 
-    expect(fetchMock).toHaveBeenCalledWith('/personas/p1/summary');
-    expect(fetchMock).toHaveBeenCalledWith('/personas/p2/summary');
+    p1Deferred.reject(new DOMException("Aborted", "AbortError"));
+
+    await waitFor(() =>
+      expect(
+        screen.getByRole("button", { name: "Persona Two" })
+      ).toContainElement(screen.getByTestId("selected-persona"))
+    );
+
+    await waitFor(() =>
+      expect(screen.getByTestId("summary-goal")).toHaveTextContent("25")
+    );
+
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+    expect(screen.getByTestId("summary-loading")).toHaveTextContent("idle");
+
+    expect(fetchMock).toHaveBeenCalledWith("/personas/p1/summary");
+    expect(fetchMock).toHaveBeenCalledWith("/personas/p2/summary");
   });
 
-  it('reuses cached summaries instead of issuing redundant requests', async () => {
+  it("reuses cached summaries instead of issuing redundant requests", async () => {
     const fetchMock = vi.fn((url: string) => {
-      if (url === '/personas') {
+      if (url === "/personas") {
         return Promise.resolve(createMockResponse(personaList));
       }
 
-      if (url.includes('/personas/p1/summary')) {
+      if (url.includes("/personas/p1/summary")) {
         return Promise.resolve(
           createMockResponse({
             summary: {
@@ -192,11 +208,11 @@ describe('useFinanceData', () => {
               categories: [],
               goals: { target_savings_rate: 11, current_savings_rate: 6 },
             },
-          }),
+          })
         );
       }
 
-      if (url.includes('/personas/p2/summary')) {
+      if (url.includes("/personas/p2/summary")) {
         return Promise.resolve(
           createMockResponse({
             summary: {
@@ -204,25 +220,31 @@ describe('useFinanceData', () => {
               categories: [],
               goals: { target_savings_rate: 22, current_savings_rate: 12 },
             },
-          }),
+          })
         );
       }
 
       throw new Error(`Unexpected request: ${url}`);
     });
 
-    global.fetch = fetchMock as unknown as typeof fetch;
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
 
     render(<TestComponent />);
 
-    await waitFor(() => expect(screen.getByTestId('summary-goal')).toHaveTextContent('11'));
+    await waitFor(() =>
+      expect(screen.getByTestId("summary-goal")).toHaveTextContent("11")
+    );
 
-    fireEvent.click(screen.getByRole('button', { name: 'Persona Two' }));
-    await waitFor(() => expect(screen.getByTestId('summary-goal')).toHaveTextContent('22'));
+    fireEvent.click(screen.getByRole("button", { name: "Persona Two" }));
+    await waitFor(() =>
+      expect(screen.getByTestId("summary-goal")).toHaveTextContent("22")
+    );
 
-    fireEvent.click(screen.getByRole('button', { name: 'Persona One' }));
+    fireEvent.click(screen.getByRole("button", { name: "Persona One" }));
 
-    await waitFor(() => expect(screen.getByTestId('summary-goal')).toHaveTextContent('11'));
+    await waitFor(() =>
+      expect(screen.getByTestId("summary-goal")).toHaveTextContent("11")
+    );
 
     expect(fetchMock).toHaveBeenCalledTimes(3);
   });
