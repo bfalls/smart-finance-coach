@@ -19,3 +19,13 @@ uvicorn backend.main:app --reload
 ```
 
 Use `FRONTEND_ORIGIN` to override the allowed CORS origin (defaults to `http://localhost:5173`).
+
+### Development shortcuts
+You can also use the `Makefile` for common tasks:
+
+```bash
+make dev   # Run the API with uvicorn and reload
+make test  # Execute pytest
+make lint  # Run Ruff linting
+make format # Apply Ruff formatting
+```
