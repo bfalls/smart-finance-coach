@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { apiUrl } from '../api';
+import { endpoints, postJson } from '../lib/api';
 import { ChatMessage, FinanceSummary } from '../types/finance';
 
 const useChat = (personaId: string, summary: FinanceSummary | null) => {
@@ -51,24 +51,12 @@ const useChat = (personaId: string, summary: FinanceSummary | null) => {
         throw new Error('Finance summary is still loading. Please try again shortly.');
       }
 
-      const response = await fetch(apiUrl('/chat'), {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          personaId,
-          persona_id: personaId,
-          messages: history,
-          summary,
-        }),
+      const data = await postJson<{ message?: ChatMessage }>(endpoints.chat, {
+        personaId,
+        persona_id: personaId,
+        messages: history,
+        summary,
       });
-
-      if (!response.ok) {
-        throw new Error(`Assistant reply failed (status ${response.status}).`);
-      }
-
-      const data = await response.json();
       const assistantMessage: ChatMessage = data?.message ?? {
         id: crypto.randomUUID(),
         role: 'assistant',

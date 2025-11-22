@@ -6,3 +6,8 @@ venv/
 env/
 .DS_Store
 *.patch
+
+# Vite / TypeScript build metadata
+*.tsbuildinfo
+vite.config.js
+vite.config.d.ts
