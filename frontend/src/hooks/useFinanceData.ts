@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { apiUrl } from '../api';
+import { endpoints, getJson } from '../lib/api';
 import { FinanceSummary, Persona } from '../types/finance';
 
 type SummaryCache = Record<string, FinanceSummary>;
@@ -67,13 +67,8 @@ const useFinanceData = () => {
       setPersonasLoading(true);
       setPersonasError(null);
 
-      const response = await fetch(apiUrl('/personas'));
-      if (!response.ok) {
-        throw new Error(`Failed to load personas (status ${response.status})`);
-      }
-
-      const data = await response.json();
-      const rawList = Array.isArray(data) ? data : data?.personas ?? [];
+      const data = await getJson<unknown>(endpoints.personas);
+      const rawList = Array.isArray(data) ? data : (data as any)?.personas ?? [];
       const normalized = rawList
         .map(normalizePersona)
         .filter((persona): persona is Persona => Boolean(persona));
@@ -113,12 +108,7 @@ const useFinanceData = () => {
       setSummaryLoading(true);
       setSummaryError(null);
 
-      const response = await fetch(apiUrl(`/personas/${selectedPersonaId}/summary`));
-      if (!response.ok) {
-        throw new Error(`Failed to load summary (status ${response.status})`);
-      }
-
-      const data = await response.json();
+      const data = await getJson<unknown>(endpoints.personaSummary(selectedPersonaId));
       const normalized = normalizeSummary(data);
 
       setSummary(normalized);
