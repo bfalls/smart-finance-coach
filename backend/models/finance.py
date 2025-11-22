@@ -1,7 +1,7 @@
 from datetime import date
 from typing import List, Literal, Optional
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class Persona(BaseModel):
@@ -77,9 +77,7 @@ class ChatRequest(BaseModel):
     messages: List[ChatMessage]
     summary: FinanceSummary
 
-    class Config:
-        allow_population_by_field_name = True
-        allow_population_by_alias = True
+    model_config = ConfigDict(populate_by_name=True)
 
     @field_validator("messages")
     def messages_must_not_be_empty(cls, value: List[ChatMessage]) -> List[ChatMessage]:

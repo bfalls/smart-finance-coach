@@ -10,8 +10,9 @@ test:
 
 # Static analysis with Ruff
 lint:
-	ruff check .
+	ruff check backend tests
 
-# Format code with Ruff
+# Format code with Ruff and Black
 format:
-	ruff format .
+	ruff format backend tests
+	black backend tests
