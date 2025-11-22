@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { apiUrl } from '../api';
 import { FinanceSummary, Persona } from '../types/finance';
 
 type SummaryCache = Record<string, FinanceSummary>;
@@ -66,7 +67,7 @@ const useFinanceData = () => {
       setPersonasLoading(true);
       setPersonasError(null);
 
-      const response = await fetch("/personas");
+      const response = await fetch(apiUrl('/personas'));
       if (!response.ok) {
         throw new Error(`Failed to load personas (status ${response.status})`);
       }
@@ -112,7 +113,7 @@ const useFinanceData = () => {
       setSummaryLoading(true);
       setSummaryError(null);
 
-      const response = await fetch(`/personas/${selectedPersonaId}/summary`);
+      const response = await fetch(apiUrl(`/personas/${selectedPersonaId}/summary`));
       if (!response.ok) {
         throw new Error(`Failed to load summary (status ${response.status})`);
       }
