@@ -5,6 +5,7 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from backend.routes.chat import router as chat_router
 from backend.routes.health import router as health_router
 from backend.routes.personas import router as personas_router
 
@@ -31,6 +32,7 @@ def create_app() -> FastAPI:
     )
 
     app.include_router(health_router)
+    app.include_router(chat_router)
     app.include_router(personas_router)
 
     return app
