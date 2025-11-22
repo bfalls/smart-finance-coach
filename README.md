@@ -12,6 +12,18 @@ uvicorn backend.main:app --reload
 
 The API listens on `http://localhost:8000` by default. Use `FRONTEND_ORIGIN` to override the allowed CORS origin (defaults to `http://localhost:5173`). All data is demo-only and read-only; the API serves canned responses from static CSVs and does not persist changes.
 
+Copy the example environment file if you want to configure API keys or override defaults:
+
+```bash
+cp .env.example .env
+```
+
+Environment variables:
+
+- `FRONTEND_ORIGIN`: Allowed CORS origins (comma-separated). Defaults to common localhost Vite ports.
+- `OPENAI_API_KEY`: Reserved for future AI integrations.
+- `ANTHROPIC_API_KEY`: Reserved for future AI integrations.
+
 ### REST endpoints (curl examples)
 * Health check
   ```bash
@@ -57,5 +69,5 @@ You can also use the `Makefile` for common tasks:
 make dev   # Run the API with uvicorn and reload
 make test  # Execute pytest
 make lint  # Run Ruff linting
-make format # Apply Ruff formatting
+make format # Apply Ruff and Black formatting
 ```
