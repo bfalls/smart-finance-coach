@@ -11,13 +11,20 @@ from backend.routes.personas import router as personas_router
 
 
 def get_allowed_origins() -> List[str]:
+    """Resolve the allowed frontend origins for CORS configuration."""
+
     frontend_origin = os.getenv("FRONTEND_ORIGIN")
-    origins = [frontend_origin] if frontend_origin else []
+    if frontend_origin:
+        # Accept comma-separated origins to simplify local/frontend deployments.
+        return [origin.strip() for origin in frontend_origin.split(",") if origin.strip()]
+
     default_origins = [
         "http://localhost:5173",
         "http://127.0.0.1:5173",
+        "http://localhost:4173",  # Alternative Vite default
+        "http://127.0.0.1:4173",
     ]
-    return origins or default_origins
+    return default_origins
 
 
 def create_app() -> FastAPI:
