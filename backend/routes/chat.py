@@ -19,6 +19,9 @@ async def chat(request: ChatRequest) -> ChatResponse:
             detail=f"Too many messages in request (max {_MAX_MESSAGES}).",
         )
 
+    if any(not message.content.strip() for message in request.messages):
+        raise HTTPException(status_code=400, detail="Messages must include content.")
+
     persona_reference = request.persona_id
     top_category = request.summary.categories[0].name if request.summary.categories else None
     savings_rate = request.summary.goals.current_savings_rate

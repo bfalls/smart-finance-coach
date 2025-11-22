@@ -1,7 +1,7 @@
 from datetime import date
 from typing import List, Literal, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, validator
 
 
 class Persona(BaseModel):
@@ -63,13 +63,29 @@ class ChatMessage(BaseModel):
     role: Literal["user", "assistant", "system"]
     content: str
 
+    @validator("content")
+    def content_must_not_be_blank(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("Message content cannot be blank.")
+        return value
+
 
 class ChatRequest(BaseModel):
     """Incoming chat payload including persona context and message history."""
 
-    persona_id: str
+    persona_id: str = Field(..., alias="personaId", min_length=1)
     messages: List[ChatMessage]
     summary: FinanceSummary
+
+    class Config:
+        allow_population_by_field_name = True
+        allow_population_by_alias = True
+
+    @validator("messages")
+    def messages_must_not_be_empty(cls, value: List[ChatMessage]) -> List[ChatMessage]:
+        if not value:
+            raise ValueError("At least one message is required.")
+        return value
 
 
 class ChatResponse(BaseModel):
