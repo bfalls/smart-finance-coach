@@ -148,7 +148,7 @@ function App() {
               </p>
             )}
             {personaReady && selectedPersonaId && (
-              <ChatPanel personaId={selectedPersonaId} />
+              <ChatPanel personaId={selectedPersonaId} summary={summary} />
             )}
           </div>
         </section>
