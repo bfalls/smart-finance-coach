@@ -47,8 +47,7 @@ function App() {
             {personasError && (
               <div
                 role="alert"
-                className="flex flex-col gap-2 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700 shadow-sm"
-              >
+                className="flex flex-col gap-2 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700 shadow-sm">
                 <p className="font-medium">Unable to load personas.</p>
                 <p className="text-slate-700">
                   {personasError} Please check your connection and retry.
@@ -57,8 +56,7 @@ function App() {
                   <button
                     type="button"
                     onClick={fetchPersonas}
-                    className="inline-flex items-center gap-2 rounded-md border border-red-200 bg-white px-3 py-1 text-sm font-medium text-red-700 shadow-sm transition hover:border-red-300 hover:text-red-800"
-                  >
+                    className="inline-flex items-center gap-2 rounded-md border border-red-200 bg-white px-3 py-1 text-sm font-medium text-red-700 shadow-sm transition hover:border-red-300 hover:text-red-800">
                     Retry loading personas
                   </button>
                 </div>
@@ -76,15 +74,19 @@ function App() {
               )}
           </div>
 
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
             {summaryLoading && (
               <>
-                <SummaryPanelSkeleton />
-                <SpendingChartsSkeleton />
+                <div className="lg:col-span-2">
+                  <SummaryPanelSkeleton />
+                </div>
+                <div className="lg:col-span-3">
+                  <SpendingChartsSkeleton />
+                </div>
               </>
             )}
             {summaryError && (
-              <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 shadow-sm lg:col-span-2">
+              <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 shadow-sm lg:col-span-5">
                 <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
                   <p className="leading-relaxed">
                     We hit a snag loading the finance summary: {summaryError}
@@ -93,8 +95,7 @@ function App() {
                     <button
                       type="button"
                       onClick={fetchSummary}
-                      className="inline-flex items-center gap-2 rounded-md border border-red-200 bg-white px-3 py-1 text-xs font-medium text-red-700 shadow-sm transition hover:border-red-300 hover:text-red-800"
-                    >
+                      className="inline-flex items-center gap-2 rounded-md border border-red-200 bg-white px-3 py-1 text-xs font-medium text-red-700 shadow-sm transition hover:border-red-300 hover:text-red-800">
                       Retry summary
                     </button>
                   </div>
@@ -103,12 +104,16 @@ function App() {
             )}
             {!summaryLoading && !summaryError && summary && (
               <>
-                <SummaryPanel summary={summary} />
-                <SpendingCharts summary={summary} />
+                <div className="lg:col-span-2">
+                  <SummaryPanel summary={summary} />
+                </div>
+                <div className="lg:col-span-3">
+                  <SpendingCharts summary={summary} />
+                </div>
               </>
             )}
             {!summaryLoading && !summaryError && !summary && (
-              <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-500 shadow-sm">
+              <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-500 shadow-sm lg:col-span-5">
                 Select a persona to view their finance summary.
               </div>
             )}
@@ -128,8 +133,7 @@ function App() {
                 <button
                   type="button"
                   onClick={fetchPersonas}
-                  className="inline-flex items-center gap-2 rounded-md border border-red-200 bg-white px-3 py-1 text-xs font-medium text-red-700 shadow-sm transition hover:border-red-300 hover:text-red-800"
-                >
+                  className="inline-flex items-center gap-2 rounded-md border border-red-200 bg-white px-3 py-1 text-xs font-medium text-red-700 shadow-sm transition hover:border-red-300 hover:text-red-800">
                   Retry loading personas
                 </button>
               </div>
