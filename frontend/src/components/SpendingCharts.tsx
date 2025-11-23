@@ -40,6 +40,7 @@ const SpendingCharts = ({ summary }: SpendingChartsProps) => {
 
   const monthlyChartHeight = 280;
   const categoryChartHeight = Math.max(56 * categoryData.length, 260);
+  const showMonthlyDots = monthlyData.length <= 2;
 
   return (
     <div
@@ -107,6 +108,8 @@ const SpendingCharts = ({ summary }: SpendingChartsProps) => {
                   stroke={chartColors.monthlyOverview.income}
                   fill="url(#colorIncome)"
                   strokeWidth={2}
+                  dot={showMonthlyDots}
+                  activeDot={{ r: 4 }}
                   name="Income"
                 />
                 <Area
@@ -115,6 +118,8 @@ const SpendingCharts = ({ summary }: SpendingChartsProps) => {
                   stroke={chartColors.monthlyOverview.spending}
                   fill="url(#colorSpending)"
                   strokeWidth={2}
+                  dot={showMonthlyDots}
+                  activeDot={{ r: 4 }}
                   name="Spending"
                 />
                 <Area
@@ -123,6 +128,8 @@ const SpendingCharts = ({ summary }: SpendingChartsProps) => {
                   stroke={chartColors.monthlyOverview.savings}
                   fill="url(#colorSavings)"
                   strokeWidth={2}
+                  dot={showMonthlyDots}
+                  activeDot={{ r: 4 }}
                   name="Savings"
                 />
               </AreaChart>
