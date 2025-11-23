@@ -87,6 +87,7 @@ def test_chat_returns_stubbed_openai_response(monkeypatch: Any) -> None:
     payload = response.json()
     assert payload["message"]["content"] == stub_content
     assert payload["message"]["role"] == "assistant"
+    assert payload["metadata"]["provider"] == "openai"
     assert payload["metadata"]["model"] == "gpt-test"
     assert isinstance(payload["metadata"]["latency_ms"], int)
 

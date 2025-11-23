@@ -78,7 +78,7 @@ const ChatPanel = ({
         ))}
         {metadata && (
           <p className="pt-2 text-right text-[11px] uppercase tracking-[0.15em] text-slate-500">
-            Model: {metadata.model} · Latency: {metadata.latency_ms}ms
+            Provider: {metadata.provider} · Model: {metadata.model} · Latency: {metadata.latency_ms}ms
           </p>
         )}
       </div>

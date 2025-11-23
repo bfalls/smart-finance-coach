@@ -33,6 +33,7 @@ export interface ChatMessage {
 }
 
 export interface ChatMetadata {
+  provider: string;
   model: string;
   latency_ms: number;
 }

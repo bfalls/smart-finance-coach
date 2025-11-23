@@ -1,4 +1,5 @@
 import json
+import logging
 from time import perf_counter
 from typing import Dict, List
 from uuid import uuid4
@@ -16,6 +17,7 @@ from backend.services.analytics import get_finance_summary
 from backend.services.finance_loader import Persona, list_personas
 
 router = APIRouter(prefix="/chat", tags=["chat"])
+logger = logging.getLogger(__name__)
 
 _MAX_MESSAGES = 50
 _HISTORY_LIMIT = 12
@@ -27,13 +29,23 @@ _PERSONA_BY_ID: Dict[str, Persona] = {persona.id: persona for persona in _PERSON
 def _validate_persona(persona_id: str) -> Persona:
     persona = _PERSONA_BY_ID.get(persona_id)
     if not persona:
+        logger.warning("Persona lookup failed", extra={"persona_id": persona_id})
         raise HTTPException(status_code=404, detail=f"Persona '{persona_id}' not found.")
+    logger.info("Validated persona for chat request", extra={"persona_id": persona_id})
     return persona
 
 
 def _build_system_prompt(persona: Persona, summary_json: dict) -> str:
     context_block = json.dumps(
         {"persona": persona.model_dump(), "finance_summary": summary_json}, indent=2
+    )
+    logger.info(
+        "Constructed system prompt",
+        extra={
+            "persona_id": persona.id,
+            "prompt_chars": len(context_block),
+            "summary_sections": list(summary_json.keys()),
+        },
     )
     return (
         "You are Smart Finance Coach, a demo-only personal finance assistant. "
@@ -64,6 +76,7 @@ async def chat(request: ChatRequest) -> ChatResponse:
 
     persona = _validate_persona(request.persona_id)
 
+    summary_source = "request" if request.summary else "loader"
     summary = request.summary or get_finance_summary(request.persona_id)
     summary_payload = summary.model_dump()
 
@@ -74,12 +87,31 @@ async def chat(request: ChatRequest) -> ChatResponse:
 
     try:
         config = load_ai_config()
+        logger.info(
+            "Resolved AI configuration",
+            extra={
+                "provider": config.provider,
+                "model": config.model,
+                "history_count": len(history),
+                "summary_source": summary_source,
+            },
+        )
 
         start = perf_counter()
         reply = generate_chat(
             messages=history, system_prompt=system_prompt, model=config.model
         )
         latency_ms = int((perf_counter() - start) * 1000)
+        logger.info(
+            "AI chat completion finished",
+            extra={
+                "persona_id": request.persona_id,
+                "provider": config.provider,
+                "model": config.model,
+                "latency_ms": latency_ms,
+                "history_count": len(history),
+            },
+        )
     except ProviderConfigError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except ProviderUnavailableError as exc:
@@ -87,6 +119,6 @@ async def chat(request: ChatRequest) -> ChatResponse:
 
     content = reply.strip() or "I could not generate a response. Please try again."
     message = ChatMessage(id=str(uuid4()), role="assistant", content=content)
-    metadata = ChatMetadata(model=config.model, latency_ms=latency_ms)
+    metadata = ChatMetadata(provider=config.provider, model=config.model, latency_ms=latency_ms)
 
     return ChatResponse(message=message, metadata=metadata)
