@@ -28,6 +28,14 @@ class AIConfig:
     openai_api_key: Optional[str]
 
 
+class ProviderConfigError(Exception):
+    """Raised when the provider cannot be configured properly."""
+
+
+class ProviderUnavailableError(Exception):
+    """Raised when the configured provider cannot serve requests."""
+
+
 class BaseAIProvider:
     """Protocol-like base class for AI providers."""
 
@@ -51,7 +59,7 @@ class OpenAIProvider(BaseAIProvider):
 
     def __init__(self, config: AIConfig) -> None:
         if not config.openai_api_key:
-            raise ValueError("OPENAI_API_KEY is required when AI_PROVIDER is 'openai'")
+            raise ProviderConfigError("OPENAI_API_KEY is required when AI_PROVIDER is 'openai'")
 
         openai_client_class, api_error, openai_error = self._load_openai_dependencies()
 
@@ -84,7 +92,9 @@ class OpenAIProvider(BaseAIProvider):
             )
         except (self.api_error, self.openai_error) as exc:
             logger.exception("OpenAI chat completion failed: %s", exc)
-            raise RuntimeError("AI provider unavailable. Please try again later.") from exc
+            raise ProviderUnavailableError(
+                "The AI provider is currently unavailable. Please try again later."
+            ) from exc
 
         choice = completion.choices[0].message
         return choice.content or ""
@@ -92,7 +102,7 @@ class OpenAIProvider(BaseAIProvider):
     @staticmethod
     def _load_openai_dependencies() -> Tuple[Type[object], Type[Exception], Type[Exception]]:
         if importlib.util.find_spec("openai") is None:
-            raise RuntimeError(
+            raise ProviderConfigError(
                 "The 'openai' package is required when AI_PROVIDER is 'openai'. "
                 "Install it with `pip install openai`."
             )
@@ -118,7 +128,9 @@ def _provider_for(config: AIConfig) -> BaseAIProvider:
     if config.provider == "openai":
         return OpenAIProvider(config)
 
-    raise ValueError(f"Unsupported AI_PROVIDER '{config.provider}'. Supported providers: mock, openai")
+    raise ProviderConfigError(
+        f"Unsupported AI_PROVIDER '{config.provider}'. Supported providers: mock, openai"
+    )
 
 
 def generate_chat(*, messages: Iterable[ChatMessage], system_prompt: str, model: Optional[str] = None) -> str:

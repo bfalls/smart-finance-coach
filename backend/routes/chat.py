@@ -6,7 +6,12 @@ from uuid import uuid4
 from fastapi import APIRouter, HTTPException
 
 from backend.models.finance import ChatMessage, ChatMetadata, ChatRequest, ChatResponse
-from backend.services.ai_client import generate_chat, load_ai_config
+from backend.services.ai_client import (
+    ProviderConfigError,
+    ProviderUnavailableError,
+    generate_chat,
+    load_ai_config,
+)
 from backend.services.analytics import get_finance_summary
 from backend.services.finance_loader import Persona, list_personas
 
@@ -67,11 +72,18 @@ async def chat(request: ChatRequest) -> ChatResponse:
     if not history:
         raise HTTPException(status_code=400, detail="At least one user message is required.")
 
-    config = load_ai_config()
+    try:
+        config = load_ai_config()
 
-    start = perf_counter()
-    reply = generate_chat(messages=history, system_prompt=system_prompt, model=config.model)
-    latency_ms = int((perf_counter() - start) * 1000)
+        start = perf_counter()
+        reply = generate_chat(
+            messages=history, system_prompt=system_prompt, model=config.model
+        )
+        latency_ms = int((perf_counter() - start) * 1000)
+    except ProviderConfigError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except ProviderUnavailableError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
 
     content = reply.strip() or "I could not generate a response. Please try again."
     message = ChatMessage(id=str(uuid4()), role="assistant", content=content)
