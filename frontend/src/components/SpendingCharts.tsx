@@ -60,13 +60,13 @@ const SpendingCharts = ({ summary }: SpendingChartsProps) => {
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <div className="rounded-lg border border-slate-200 bg-slate-50/70 p-4 shadow-sm">
+        <div className="flex flex-col rounded-lg border border-slate-200 bg-slate-50/70 p-4 shadow-sm">
           <div className="flex flex-col gap-1 pb-3">
             <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Monthly Overview</p>
             <h3 className="text-base font-semibold text-slate-900">Income, spending, savings</h3>
             <p className="text-xs text-slate-500">Stacked area view with the latest months of activity.</p>
           </div>
-          <div className="w-full" style={{ minHeight: monthlyChartHeight }}>
+          <div className="w-full flex-1" style={{ minHeight: monthlyChartHeight }}>
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={monthlyData} margin={{ left: 0, right: 8 }}>
                 <defs>
@@ -130,13 +130,13 @@ const SpendingCharts = ({ summary }: SpendingChartsProps) => {
           </div>
         </div>
 
-        <div className="rounded-lg border border-slate-200 bg-slate-50/70 p-4 shadow-sm">
+        <div className="flex flex-col rounded-lg border border-slate-200 bg-slate-50/70 p-4 shadow-sm">
           <div className="flex flex-col gap-1 pb-3">
             <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Spending by Category</p>
             <h3 className="text-base font-semibold text-slate-900">Latest month split</h3>
             <p className="text-xs text-slate-500">Quick comparison of essential, discretionary, and other costs.</p>
           </div>
-          <div className="w-full" style={{ minHeight: categoryChartHeight }}>
+          <div className="w-full flex-1" style={{ minHeight: categoryChartHeight }}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={categoryData}
