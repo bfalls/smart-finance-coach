@@ -38,6 +38,9 @@ const SpendingCharts = ({ summary }: SpendingChartsProps) => {
         : 'discretionary',
   }));
 
+  const monthlyChartHeight = 280;
+  const categoryChartHeight = Math.max(56 * categoryData.length, 260);
+
   return (
     <div
       className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm"
@@ -63,8 +66,8 @@ const SpendingCharts = ({ summary }: SpendingChartsProps) => {
             <h3 className="text-base font-semibold text-slate-900">Income, spending, savings</h3>
             <p className="text-xs text-slate-500">Stacked area view with the latest months of activity.</p>
           </div>
-          <div className="w-full">
-            <ResponsiveContainer width="100%" aspect={1.8}>
+          <div className="w-full" style={{ minHeight: monthlyChartHeight }}>
+            <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={monthlyData} margin={{ left: 0, right: 8 }}>
                 <defs>
                   <linearGradient id="colorSpending" x1="0" y1="0" x2="0" y2="1">
@@ -97,7 +100,7 @@ const SpendingCharts = ({ summary }: SpendingChartsProps) => {
                     boxShadow: '0 10px 20px rgba(15, 23, 42, 0.08)',
                   }}
                 />
-                <Legend verticalAlign="bottom" height={36} />
+                <Legend verticalAlign="bottom" height={40} />
                 <Area
                   type="monotone"
                   dataKey="income"
@@ -133,8 +136,8 @@ const SpendingCharts = ({ summary }: SpendingChartsProps) => {
             <h3 className="text-base font-semibold text-slate-900">Latest month split</h3>
             <p className="text-xs text-slate-500">Quick comparison of essential, discretionary, and other costs.</p>
           </div>
-          <div className="w-full">
-            <ResponsiveContainer width="100%" aspect={1.8}>
+          <div className="w-full" style={{ minHeight: categoryChartHeight }}>
+            <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={categoryData}
                 layout="vertical"
@@ -158,7 +161,7 @@ const SpendingCharts = ({ summary }: SpendingChartsProps) => {
                   {categoryData.map((entry) => (
                     <Cell
                       key={entry.name}
-                      radius={[6, 6, 6, 6]}
+                      radius={6}
                       fill={chartColors.categories[entry.tone as keyof typeof chartColors.categories]}
                       stroke={chartColors.categories[entry.tone as keyof typeof chartColors.categories]}
                     />
