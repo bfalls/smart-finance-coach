@@ -40,7 +40,14 @@ const SpendingCharts = ({ summary }: SpendingChartsProps) => {
 
   const monthlyChartHeight = 280;
   const categoryChartHeight = Math.max(56 * categoryData.length, 260);
+  const totalCategorySpend = categoryData.reduce((sum, category) => sum + category.value, 0);
   const showMonthlyDots = monthlyData.length <= 2;
+
+  const categoryLegendItems = [
+    { label: 'Essentials', tone: 'essential' },
+    { label: 'Discretionary', tone: 'discretionary' },
+    { label: 'Neutral', tone: 'neutral' },
+  ];
 
   return (
     <div
@@ -156,14 +163,40 @@ const SpendingCharts = ({ summary }: SpendingChartsProps) => {
                 <YAxis dataKey="name" type="category" width={120} tickLine={false} axisLine={false} />
                 <Tooltip
                   cursor={{ fill: 'rgba(148, 163, 184, 0.15)' }}
-                  formatter={(value: number) => `$${value.toLocaleString()}`}
+                  formatter={(value: number) => {
+                    const percent = totalCategorySpend
+                      ? ((value / totalCategorySpend) * 100).toFixed(1)
+                      : '0.0';
+                    return [`$${value.toLocaleString()} (${percent}%)`, 'Spend'];
+                  }}
                   contentStyle={{
                     borderRadius: 12,
                     border: `1px solid ${chartColors.grid.light}`,
                     boxShadow: '0 10px 20px rgba(15, 23, 42, 0.08)',
                   }}
                 />
-                <Legend verticalAlign="bottom" height={32} />
+                <Legend
+                  verticalAlign="bottom"
+                  height={36}
+                  content={() => (
+                    <div className="flex flex-wrap items-center justify-start gap-3 px-1 text-xs text-slate-600">
+                      {categoryLegendItems.map((item) => (
+                        <div key={item.tone} className="flex items-center gap-2">
+                          <span
+                            className="inline-block h-3 w-3 rounded-full"
+                            style={{
+                              backgroundColor:
+                                chartColors.categories[item.tone as keyof typeof chartColors.categories],
+                              border: `1px solid ${chartColors.categories[item.tone as keyof typeof chartColors.categories]}`,
+                            }}
+                            aria-hidden
+                          />
+                          <span className="font-medium text-slate-700">{item.label}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                />
                 <Bar dataKey="value" name="Spend">
                   {categoryData.map((entry) => (
                     <Cell
