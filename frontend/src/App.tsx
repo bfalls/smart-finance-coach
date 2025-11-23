@@ -27,7 +27,7 @@ function App() {
   return (
     <div className="min-h-screen text-slate-900">
       <header className="border-b border-slate-200 bg-white/80 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
+        <div className="mx-auto flex w-full max-w-screen-2xl items-center justify-between px-4 py-4 xl:max-w-[1800px]">
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-slate-500">
               Demo Only
@@ -40,7 +40,7 @@ function App() {
         </div>
       </header>
 
-      <main className="mx-auto grid max-w-6xl grid-cols-1 gap-4 px-4 py-6 lg:grid-cols-3">
+      <main className="mx-auto grid w-full max-w-screen-2xl grid-cols-1 gap-4 px-4 py-6 lg:grid-cols-3 xl:max-w-[1800px]">
         <section className="space-y-4 lg:col-span-2">
           <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
             {personasLoading && <PersonaSelectorSkeleton />}
