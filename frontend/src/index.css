@@ -5,6 +5,16 @@
 :root {
   color: #0f172a;
   background-color: #f8fafc;
+  --color-brand-primary: #2563eb;
+  --color-brand-accent: #0ea5e9;
+  --color-chart-income: #0ea5e9;
+  --color-chart-spending: #475569;
+  --color-chart-savings: #22c55e;
+  --color-chart-essential: #f97316;
+  --color-chart-discretionary: #a855f7;
+  --color-chart-neutral: #cbd5e1;
+  --color-surface: #ffffff;
+  --color-surface-subtle: #f8fafc;
 }
 
 body {
