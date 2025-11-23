@@ -16,7 +16,7 @@ const ChatPanel = ({
   summaryLoading,
   onRetrySummary,
 }: ChatPanelProps) => {
-  const { messages, input, setInput, sendMessage, isSending, error } = useChat(
+  const { messages, input, setInput, sendMessage, isSending, error, metadata } = useChat(
     personaId,
     summary,
   );
@@ -76,6 +76,11 @@ const ChatPanel = ({
             </div>
           </div>
         ))}
+        {metadata && (
+          <p className="pt-2 text-right text-[11px] uppercase tracking-[0.15em] text-slate-500">
+            Model: {metadata.model} · Latency: {metadata.latency_ms}ms
+          </p>
+        )}
       </div>
 
       <form

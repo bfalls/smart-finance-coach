@@ -8,12 +8,11 @@ variable. Currently supports:
 
 from __future__ import annotations
 
+import importlib.util
 import logging
 import os
 from dataclasses import dataclass
-from typing import Iterable, List, Mapping, MutableMapping, Optional
-
-from openai import APIError, OpenAI, OpenAIError
+from typing import Any, Iterable, List, Mapping, MutableMapping, Optional, Tuple, Type
 
 logger = logging.getLogger(__name__)
 
@@ -54,7 +53,18 @@ class OpenAIProvider(BaseAIProvider):
         if not config.openai_api_key:
             raise ValueError("OPENAI_API_KEY is required when AI_PROVIDER is 'openai'")
 
-        self.client = OpenAI(api_key=config.openai_api_key)
+        openai_client_class, api_error, openai_error = self._load_openai_dependencies()
+
+        # Ensure the env var is set so the OpenAI client can pick it up.
+        os.environ.setdefault("OPENAI_API_KEY", config.openai_api_key)
+
+        # Note: we intentionally type this as Any so static type checkers
+        # don't complain about dynamic attributes (e.g. `.chat`).
+        self.client: Any = openai_client_class()
+            
+            
+        self.api_error = api_error
+        self.openai_error = openai_error
         self.default_model = config.model
 
     def generate_chat(self, *, messages: Iterable[ChatMessage], system_prompt: str, model: Optional[str] = None) -> str:
@@ -72,12 +82,24 @@ class OpenAIProvider(BaseAIProvider):
                 max_tokens=600,
                 temperature=0.4,
             )
-        except (APIError, OpenAIError) as exc:
+        except (self.api_error, self.openai_error) as exc:
             logger.exception("OpenAI chat completion failed: %s", exc)
             raise RuntimeError("AI provider unavailable. Please try again later.") from exc
 
         choice = completion.choices[0].message
         return choice.content or ""
+
+    @staticmethod
+    def _load_openai_dependencies() -> Tuple[Type[object], Type[Exception], Type[Exception]]:
+        if importlib.util.find_spec("openai") is None:
+            raise RuntimeError(
+                "The 'openai' package is required when AI_PROVIDER is 'openai'. "
+                "Install it with `pip install openai`."
+            )
+
+        from openai import APIError, OpenAI, OpenAIError  # type: ignore
+
+        return OpenAI, APIError, OpenAIError
 
 
 def load_ai_config() -> AIConfig:

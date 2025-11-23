@@ -31,3 +31,13 @@ export interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
   content: string;
 }
+
+export interface ChatMetadata {
+  model: string;
+  latency_ms: number;
+}
+
+export interface ChatResponse {
+  message: ChatMessage;
+  metadata: ChatMetadata;
+}
