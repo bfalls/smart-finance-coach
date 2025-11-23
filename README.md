@@ -25,10 +25,9 @@ cp .env.example .env
 Environment variables:
 
 - `FRONTEND_ORIGIN`: Allowed CORS origins (comma-separated). Defaults to common localhost Vite ports.
-- `OPENAI_API_KEY`: Your OpenAI API key when using the OpenAI provider.
-- `ANTHROPIC_API_KEY`: Reserved for future AI integrations.
 - `AI_PROVIDER`: `mock` (default, no external calls) or `openai` (requires `OPENAI_API_KEY`).
 - `AI_MODEL`: Model name for AI responses (default: `gpt-4.1-mini`).
+- `OPENAI_API_KEY`: Your OpenAI API key when using the OpenAI provider.
 
 ### REST endpoints (curl examples)
 Base URL: `http://localhost:8000`
@@ -70,11 +69,14 @@ The app is demo-only. You can run the AI path locally using either the mock prov
 1. Copy the environment template and select a provider:
    ```bash
    cp .env.example .env
-   # Mock mode (no network calls, free)
-   echo "AI_PROVIDER=mock" >> .env
-   # OR OpenAI mode
-   echo "AI_PROVIDER=openai" >> .env
-   echo "OPENAI_API_KEY=sk-your-key" >> .env
+   # Mock mode (default, no network calls)
+   # AI_PROVIDER=mock
+   
+   # OpenAI mode (requires a key)
+   AI_PROVIDER=openai
+   OPENAI_API_KEY=sk-your-key
+   # Optionally override the model name
+   # AI_MODEL=gpt-4.1-mini
    ```
 2. Start the backend API:
    ```bash
