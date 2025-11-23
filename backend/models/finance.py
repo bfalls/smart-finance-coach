@@ -89,6 +89,7 @@ class ChatRequest(BaseModel):
 class ChatMetadata(BaseModel):
     """Metadata about the model response."""
 
+    provider: str
     model: str
     latency_ms: int
 
