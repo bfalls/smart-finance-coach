@@ -75,7 +75,7 @@ class ChatRequest(BaseModel):
 
     persona_id: str = Field(..., alias="personaId", min_length=1)
     messages: List[ChatMessage]
-    summary: FinanceSummary
+    summary: Optional[FinanceSummary] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
@@ -86,7 +86,15 @@ class ChatRequest(BaseModel):
         return value
 
 
+class ChatMetadata(BaseModel):
+    """Metadata about the model response."""
+
+    model: str
+    latency_ms: int
+
+
 class ChatResponse(BaseModel):
     """Assistant reply returned to the chat panel after model generation."""
 
     message: ChatMessage
+    metadata: ChatMetadata
