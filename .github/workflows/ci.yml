@@ -25,3 +25,7 @@ jobs:
 
       - name: Run tests
         run: pytest
+
+      - name: Run mock chat smoke test
+        run: make chat-smoke
+        

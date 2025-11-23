@@ -1,6 +1,7 @@
 __pycache__/
 node_modules/
 .env
+.env.openai
 .venv/
 venv/
 env/

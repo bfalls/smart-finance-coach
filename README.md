@@ -68,16 +68,17 @@ The app is demo-only. You can run the AI path locally using either the mock prov
 
 1. Copy the environment template and select a provider:
    ```bash
-   cp .env.example .env
-   # Mock mode (default, no network calls)
-   # AI_PROVIDER=mock
-   
-   # OpenAI mode (requires a key)
-   AI_PROVIDER=openai
-   OPENAI_API_KEY=sk-your-key
-   # Optionally override the model name
-   # AI_MODEL=gpt-4.1-mini
+   cp .env.example .env # this file should stay in MOCK mode for normal dev
+   # Use AI_PROVIDER=mock here (default) to avoid any external/metered calls
    ```
+
+   * OpenAI configuration (optional, controlled use)
+   * To avoid accidental costs, keep `.env` in mock mode and create a **separate file** for OpenAI usage:
+      ```bash
+      cp .env.example .env.openai
+      echo "AI_PROVIDER=openai" >> .env.openai
+      echo "OPENAI_API_KEY=sk-your-key" >> .env.openai
+      ```
 2. Start the backend API:
    ```bash
    uvicorn backend.main:app --reload
@@ -89,6 +90,22 @@ The app is demo-only. You can run the AI path locally using either the mock prov
    VITE_API_BASE_URL=http://localhost:8000 npm run dev
    ```
 4. Open the app in your browser (default `http://localhost:5173`), pick a persona, and send a chat message. You should see an AI reply and metadata (model + latency) from the backend. All data is fictional and limited to the provided personas.
+
+### Local AI smoke tests
+
+There are now two separate smoke tests to validate the full AI pipeline:
+
+| Command | Provider | Cost | Purpose |
+|--------|----------|------|---------|
+| `make chat-smoke` | `mock` | $0 | End-to-end test using the mock provider (always safe). |
+| `make openai-smoke` | `openai` | Paid | Sends a real request to OpenAI (requires API key). |
+| `make dev-openai` | `openai` | Paid | Starts the API using OpenAI for manual UI testing. |
+
+#### Mock (safe) smoke test
+
+```bash
+make chat-smoke  
+```
 
 ## Frontend quickstart
 ```bash
@@ -107,4 +124,41 @@ make dev   # Run the API with uvicorn and reload
 make test  # Execute pytest
 make lint  # Run Ruff linting
 make format # Apply Ruff and Black formatting
+make openai-smoke  # Requires `.env.openai`, runs a real OpenAI request
+make dev-openai     # Starts the API with OpenAI provider for manual testing
 ```
+
+### OpenAI smoke test
+
+Run this quick check to confirm the app can reach OpenAI with your key. The `openai-smoke` target loads your `.env`, exports
+`AI_PROVIDER=openai`, `AI_MODEL`, and `OPENAI_API_KEY`, starts the API, and posts to `/chat` with a sample persona summary (same
+flow as the curl example above).
+
+```bash
+# Create OpenAI config separately (DO NOT overwrite .env)
+cp .env.example .env.openai
+echo "AI_PROVIDER=openai" >> .env.openai
+echo "OPENAI_API_KEY=sk-your-key" >> .env.openai
+
+# Run a real OpenAI test (single request, low cost)
+make openai-smoke
+```
+
+Expected success:
+- Terminal prints `✅ OpenAI smoke test returned: ...` with the first part of the AI reply.
+- Request/response JSONs are saved to `/tmp/openai_smoke_request.json` and `/tmp/openai_smoke_response.json` for inspection.
+
+Common failure cases:
+- Missing key: `make` stops immediately with `Set OPENAI_API_KEY with your OpenAI token`.
+- Model name mismatch: OpenAI returns a model-not-found error in `/tmp/openai_smoke_response.json`; set `OPENAI_MODEL` to a
+  model available to your account.
+- Expired/insufficient permissions: OpenAI returns 401/429 errors; confirm the key and quota, then re-run the target.
+
+### Cost Safety Notes
+
+- `.env` should remain in **mock mode** for normal development.
+- OpenAI usage requires `.env.openai` AND an explicit Makefile command.
+- Only these targets will use your API key:
+  - `make openai-smoke`  -> one request (automated test)
+  - `make dev-openai`    -> manual testing via UI or curl
+- To return to free mode, simply stop the server and run `make dev`.
