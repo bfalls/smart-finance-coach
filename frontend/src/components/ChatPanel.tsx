@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import useChat from '../hooks/useChat';
 import { FinanceSummary } from '../types/finance';
 
@@ -23,6 +24,12 @@ const ChatPanel = ({
 
   const isChatDisabled = isSending || summaryLoading || !summary;
   const showConnecting = (summaryLoading || !summary) && !summaryError;
+
+  const bottomRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, metadata]);
 
   return (
     <div className="flex h-[480px] flex-col">
@@ -81,6 +88,7 @@ const ChatPanel = ({
             Provider: {metadata.provider} · Model: {metadata.model} · Latency: {metadata.latency_ms}ms
           </p>
         )}
+        <div ref={bottomRef} />
       </div>
 
       <form
