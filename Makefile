@@ -1,9 +1,11 @@
 .PHONY: dev test lint format dev-openai openai-smoke chat-smoke
 
+LOCAL_IP := $(shell ifconfig | awk '/inet / && $$2 !~ /127\.0\.0\.1/ {print $$2; exit}')
 OPENAI_MODEL ?= gpt-4.1-mini
 
 # Run the FastAPI app with auto-reload
 dev:
+	FRONTEND_ORIGIN="http://localhost:5173,http://$(LOCAL_IP):5173" \
 	uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
 
 dev-openai:
@@ -11,6 +13,7 @@ dev-openai:
 	@set -a; \
 	[ -f .env.openai ] && . .env.openai || (echo '❌ .env.openai missing'; exit 1); \
 	set +a; \
+	FRONTEND_ORIGIN="http://localhost:5173,http://$(LOCAL_IP):5173" \
 	uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
 
 # Run the test suite

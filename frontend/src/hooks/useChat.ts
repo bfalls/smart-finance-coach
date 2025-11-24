@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { endpoints, postJson } from '../lib/api';
 import { ChatMessage, ChatMetadata, ChatResponse, FinanceSummary } from '../types/finance';
+import { generateId } from "../lib/uuid";
+
 
 const useChat = (personaId: string, summary: FinanceSummary | null) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -29,15 +31,15 @@ const useChat = (personaId: string, summary: FinanceSummary | null) => {
     if (!trimmedInput) return;
 
     const userMessage: ChatMessage = {
-      id: crypto.randomUUID(),
-      role: 'user',
+      id: generateId(),
+      role: "user",
       content: trimmedInput,
     };
 
     const pendingMessage: ChatMessage = {
-      id: crypto.randomUUID(),
-      role: 'assistant',
-      content: 'Thinking…',
+      id: generateId(),
+      role: "assistant",
+      content: "Thinking…",
     };
 
     const history = [...messages, userMessage];
@@ -58,18 +60,20 @@ const useChat = (personaId: string, summary: FinanceSummary | null) => {
       });
 
       const assistantMessage: ChatMessage = data?.message ?? {
-        id: crypto.randomUUID(),
-        role: 'assistant',
-        content: 'I could not read the server response, but I am here to help with your budget.',
+        id: generateId(),
+        role: "assistant",
+        content:
+          "I could not read the server response, but I am here to help with your budget.",
       };
 
       setMessages([...history, assistantMessage]);
       setMetadata(data?.metadata ?? null);
     } catch (err) {
       const fallback: ChatMessage = {
-        id: crypto.randomUUID(),
-        role: 'assistant',
-        content: 'Sorry, I could not fetch a reply right now. Please try again.',
+        id: generateId(),
+        role: "assistant",
+        content:
+          "Sorry, I could not fetch a reply right now. Please try again.",
       };
 
       setMessages([...history, fallback]);
