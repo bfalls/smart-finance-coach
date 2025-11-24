@@ -42,6 +42,8 @@ const SpendingCharts = ({ summary }: SpendingChartsProps) => {
   const categoryChartHeight = Math.max(56 * categoryData.length, 260);
   const totalCategorySpend = categoryData.reduce((sum, category) => sum + category.value, 0);
   const showMonthlyDots = monthlyData.length <= 2;
+  const hasMonthlyData = monthlyData.length > 0;
+  const hasCategoryData = categoryData.length > 0;
 
   const categoryLegendItems = [
     { label: 'Essentials', tone: 'essential' },
@@ -75,72 +77,78 @@ const SpendingCharts = ({ summary }: SpendingChartsProps) => {
             <p className="text-xs text-slate-500">Stacked area view with the latest months of activity.</p>
           </div>
           <div className="w-full flex-1" style={{ minHeight: monthlyChartHeight }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={monthlyData} margin={{ left: 0, right: 8 }}>
-                <defs>
-                  <linearGradient id="colorSpending" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor={chartColors.monthlyOverview.spending} stopOpacity={0.25} />
-                    <stop offset="95%" stopColor={chartColors.monthlyOverview.spending} stopOpacity={0.05} />
-                  </linearGradient>
-                  <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor={chartColors.monthlyOverview.income} stopOpacity={0.25} />
-                    <stop offset="95%" stopColor={chartColors.monthlyOverview.income} stopOpacity={0.05} />
-                  </linearGradient>
-                  <linearGradient id="colorSavings" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor={chartColors.monthlyOverview.savings} stopOpacity={0.25} />
-                    <stop offset="95%" stopColor={chartColors.monthlyOverview.savings} stopOpacity={0.05} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid stroke={chartColors.grid.light} strokeDasharray="3 3" />
-                <XAxis dataKey="monthLabel" tickLine={false} axisLine={false} tickMargin={8} />
-                <YAxis
-                  tickLine={false}
-                  axisLine={false}
-                  tickFormatter={(value) => `$${value.toLocaleString()}`}
-                  width={80}
-                />
-                <Tooltip
-                  cursor={{ stroke: chartColors.grid.light }}
-                  formatter={(value: number) => `$${value.toLocaleString()}`}
-                  contentStyle={{
-                    borderRadius: 12,
-                    border: `1px solid ${chartColors.grid.light}`,
-                    boxShadow: '0 10px 20px rgba(15, 23, 42, 0.08)',
-                  }}
-                />
-                <Legend verticalAlign="bottom" height={40} />
-                <Area
-                  type="monotone"
-                  dataKey="income"
-                  stroke={chartColors.monthlyOverview.income}
-                  fill="url(#colorIncome)"
-                  strokeWidth={2}
-                  dot={showMonthlyDots}
-                  activeDot={{ r: 4 }}
-                  name="Income"
-                />
-                <Area
-                  type="monotone"
-                  dataKey="spending"
-                  stroke={chartColors.monthlyOverview.spending}
-                  fill="url(#colorSpending)"
-                  strokeWidth={2}
-                  dot={showMonthlyDots}
-                  activeDot={{ r: 4 }}
-                  name="Spending"
-                />
-                <Area
-                  type="monotone"
-                  dataKey="savings"
-                  stroke={chartColors.monthlyOverview.savings}
-                  fill="url(#colorSavings)"
-                  strokeWidth={2}
-                  dot={showMonthlyDots}
-                  activeDot={{ r: 4 }}
-                  name="Savings"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
+            {hasMonthlyData ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={monthlyData} margin={{ left: 0, right: 8 }}>
+                  <defs>
+                    <linearGradient id="colorSpending" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor={chartColors.monthlyOverview.spending} stopOpacity={0.25} />
+                      <stop offset="95%" stopColor={chartColors.monthlyOverview.spending} stopOpacity={0.05} />
+                    </linearGradient>
+                    <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor={chartColors.monthlyOverview.income} stopOpacity={0.25} />
+                      <stop offset="95%" stopColor={chartColors.monthlyOverview.income} stopOpacity={0.05} />
+                    </linearGradient>
+                    <linearGradient id="colorSavings" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor={chartColors.monthlyOverview.savings} stopOpacity={0.25} />
+                      <stop offset="95%" stopColor={chartColors.monthlyOverview.savings} stopOpacity={0.05} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid stroke={chartColors.grid.light} strokeDasharray="3 3" />
+                  <XAxis dataKey="monthLabel" tickLine={false} axisLine={false} tickMargin={8} />
+                  <YAxis
+                    tickLine={false}
+                    axisLine={false}
+                    tickFormatter={(value) => `$${value.toLocaleString()}`}
+                    width={80}
+                  />
+                  <Tooltip
+                    cursor={{ stroke: chartColors.grid.light }}
+                    formatter={(value: number) => `$${value.toLocaleString()}`}
+                    contentStyle={{
+                      borderRadius: 12,
+                      border: `1px solid ${chartColors.grid.light}`,
+                      boxShadow: '0 10px 20px rgba(15, 23, 42, 0.08)',
+                    }}
+                  />
+                  <Legend verticalAlign="bottom" height={40} />
+                  <Area
+                    type="monotone"
+                    dataKey="income"
+                    stroke={chartColors.monthlyOverview.income}
+                    fill="url(#colorIncome)"
+                    strokeWidth={2}
+                    dot={showMonthlyDots}
+                    activeDot={{ r: 4 }}
+                    name="Income"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="spending"
+                    stroke={chartColors.monthlyOverview.spending}
+                    fill="url(#colorSpending)"
+                    strokeWidth={2}
+                    dot={showMonthlyDots}
+                    activeDot={{ r: 4 }}
+                    name="Spending"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="savings"
+                    stroke={chartColors.monthlyOverview.savings}
+                    fill="url(#colorSavings)"
+                    strokeWidth={2}
+                    dot={showMonthlyDots}
+                    activeDot={{ r: 4 }}
+                    name="Savings"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex h-full items-center justify-center rounded-lg border border-dashed border-slate-200 bg-white/60 p-6 text-center text-sm text-slate-500">
+                No monthly overview data available.
+              </div>
+            )}
           </div>
         </div>
 
@@ -151,64 +159,70 @@ const SpendingCharts = ({ summary }: SpendingChartsProps) => {
             <p className="text-xs text-slate-500">Quick comparison of essential, discretionary, and other costs.</p>
           </div>
           <div className="w-full flex-1" style={{ minHeight: categoryChartHeight }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={categoryData}
-                layout="vertical"
-                margin={{ left: 12, right: 12 }}
-                barSize={16}
-              >
-                <CartesianGrid strokeDasharray="3 3" stroke={chartColors.grid.light} />
-                <XAxis type="number" hide />
-                <YAxis dataKey="name" type="category" width={120} tickLine={false} axisLine={false} />
-                <Tooltip
-                  cursor={{ fill: 'rgba(148, 163, 184, 0.15)' }}
-                  formatter={(value: number) => {
-                    const percent = totalCategorySpend
-                      ? ((value / totalCategorySpend) * 100).toFixed(1)
-                      : '0.0';
-                    return [`$${value.toLocaleString()} (${percent}%)`, 'Spend'];
-                  }}
-                  contentStyle={{
-                    borderRadius: 12,
-                    border: `1px solid ${chartColors.grid.light}`,
-                    boxShadow: '0 10px 20px rgba(15, 23, 42, 0.08)',
-                  }}
-                />
-                <Legend
-                  verticalAlign="bottom"
-                  height={36}
-                  content={() => (
-                    <div className="flex flex-wrap items-center justify-start gap-3 px-1 text-xs text-slate-600">
-                      {categoryLegendItems.map((item) => (
-                        <div key={item.tone} className="flex items-center gap-2">
-                          <span
-                            className="inline-block h-3 w-3 rounded-full"
-                            style={{
-                              backgroundColor:
-                                chartColors.categories[item.tone as keyof typeof chartColors.categories],
-                              border: `1px solid ${chartColors.categories[item.tone as keyof typeof chartColors.categories]}`,
-                            }}
-                            aria-hidden
-                          />
-                          <span className="font-medium text-slate-700">{item.label}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                />
-                <Bar dataKey="value" name="Spend">
-                  {categoryData.map((entry) => (
-                    <Cell
-                      key={entry.name}
-                      radius={6}
-                      fill={chartColors.categories[entry.tone as keyof typeof chartColors.categories]}
-                      stroke={chartColors.categories[entry.tone as keyof typeof chartColors.categories]}
-                    />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+            {hasCategoryData ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={categoryData}
+                  layout="vertical"
+                  margin={{ left: 12, right: 12 }}
+                  barSize={16}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke={chartColors.grid.light} />
+                  <XAxis type="number" hide />
+                  <YAxis dataKey="name" type="category" width={120} tickLine={false} axisLine={false} />
+                  <Tooltip
+                    cursor={{ fill: 'rgba(148, 163, 184, 0.15)' }}
+                    formatter={(value: number) => {
+                      const percent = totalCategorySpend
+                        ? ((value / totalCategorySpend) * 100).toFixed(1)
+                        : '0.0';
+                      return [`$${value.toLocaleString()} (${percent}%)`, 'Spend'];
+                    }}
+                    contentStyle={{
+                      borderRadius: 12,
+                      border: `1px solid ${chartColors.grid.light}`,
+                      boxShadow: '0 10px 20px rgba(15, 23, 42, 0.08)',
+                    }}
+                  />
+                  <Legend
+                    verticalAlign="bottom"
+                    height={36}
+                    content={() => (
+                      <div className="flex flex-wrap items-center justify-start gap-3 px-1 text-xs text-slate-600">
+                        {categoryLegendItems.map((item) => (
+                          <div key={item.tone} className="flex items-center gap-2">
+                            <span
+                              className="inline-block h-3 w-3 rounded-full"
+                              style={{
+                                backgroundColor:
+                                  chartColors.categories[item.tone as keyof typeof chartColors.categories],
+                                border: `1px solid ${chartColors.categories[item.tone as keyof typeof chartColors.categories]}`,
+                              }}
+                              aria-hidden
+                            />
+                            <span className="font-medium text-slate-700">{item.label}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  />
+                  <Bar dataKey="value" name="Spend">
+                    {categoryData.map((entry) => (
+                      <Cell
+                        key={entry.name}
+                        radius={6}
+                        fill={chartColors.categories[entry.tone as keyof typeof chartColors.categories]}
+                        stroke={chartColors.categories[entry.tone as keyof typeof chartColors.categories]}
+                      />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex h-full items-center justify-center rounded-lg border border-dashed border-slate-200 bg-white/60 p-6 text-center text-sm text-slate-500">
+                No category data available.
+              </div>
+            )}
           </div>
         </div>
       </div>
